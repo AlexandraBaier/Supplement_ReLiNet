@@ -1,0 +1,883 @@
+{
+  "settings": {
+    "time_delta": 1.0,
+    "window_size": 60,
+    "horizon_size": 900,
+    "session": {
+      "total_runs_for_best_models": 10
+    },
+    "control_names": [
+      "n",
+      "deltal",
+      "deltar",
+      "Vw",
+      "alpha_x",
+      "alpha_y"
+    ],
+    "state_names": [
+      "u",
+      "v",
+      "p",
+      "r",
+      "phi"
+    ],
+    "additional_tests": {
+      "bounded_residual": {
+        "test_class": "deepsysid.pipeline.testing.bounded_residual.BoundedResidualInferenceTest",
+        "parameters": {
+          "thresholds": [
+            10.0,
+            9.0,
+            8.0,
+            6.0,
+            5.0,
+            4.0,
+            3.0,
+            2.0,
+            1.5,
+            1.0,
+            0.75,
+            0.5,
+            0.4,
+            0.3,
+            0.2,
+            0.1
+          ]
+        }
+      }
+    },
+    "target_metric": "nrmse",
+    "metrics": {
+      "rmse": {
+        "metric_class": "deepsysid.pipeline.metrics.RootMeanSquaredErrorMetric",
+        "parameters": {}
+      },
+      "mse": {
+        "metric_class": "deepsysid.pipeline.metrics.MeanSquaredErrorMetric",
+        "parameters": {}
+      },
+      "mae": {
+        "metric_class": "deepsysid.pipeline.metrics.MeanAbsoluteErrorMetric",
+        "parameters": {}
+      },
+      "trajectory_rmse": {
+        "metric_class": "deepsysid.pipeline.metrics.Trajectory4DOFRootMeanSquaredErrorMetric",
+        "parameters": {}
+      },
+      "nrmse": {
+        "metric_class": "deepsysid.pipeline.metrics.NormalizedRootMeanSquaredErrorMetric",
+        "parameters": {}
+      }
+    }
+  },
+  "models": [
+    {
+      "model_base_name": "QLag",
+      "model_class": "deepsysid.models.linear.QuadraticControlLag",
+      "static_parameters": {},
+      "flexible_parameters": {
+        "lag": [
+          5,
+          10,
+          15,
+          30,
+          45,
+          60
+        ]
+      }
+    },
+    {
+      "model_base_name": "LSTM+Init",
+      "model_class": "deepsysid.models.recurrent.LSTMInitModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_predictor": 1000,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "LSTM+CombinedInit",
+      "model_class": "deepsysid.models.recurrent.LSTMCombinedInitModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs": 1000,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          32,
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Lin",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridLinearModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Hyd",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridBlankeModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Min",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridMinimalManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Pro",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridPropulsionManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "wake_factor": 0.25,
+        "diameter": 0.75,
+        "Kt": [
+          -0.1060,
+          -0.3246,
+          0.4594
+        ],
+        "lx": -25,
+        "ly": 4,
+        "lz": 4,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Min+Lin",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridLinearMinimalManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Pro+Lin",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridLinearPropulsionManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "wake_factor": 0.25,
+        "diameter": 0.75,
+        "Kt": [
+          -0.1060,
+          -0.3246,
+          0.4594
+        ],
+        "lx": -25,
+        "ly": 4,
+        "lz": 4,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Min+Hyd",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridBlankeMinimalManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Pro+Hyd",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridBlankePropulsionModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 300,
+        "epochs_feedback": 800,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "wake_factor": 0.25,
+        "diameter": 0.75,
+        "Kt": [
+          -0.1060,
+          -0.3246,
+          0.4594
+        ],
+        "lx": -25,
+        "ly": 4,
+        "lz": 4,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Lin-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridLinearModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Hyd-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridBlankeModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Min-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridMinimalManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Pro-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridPropulsionManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "wake_factor": 0.25,
+        "diameter": 0.75,
+        "Kt": [
+          -0.1060,
+          -0.3246,
+          0.4594
+        ],
+        "lx": -25,
+        "ly": 4,
+        "lz": 4,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Min+Lin-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridLinearMinimalManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Pro+Lin-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridLinearPropulsionManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "wake_factor": 0.25,
+        "diameter": 0.75,
+        "Kt": [
+          -0.1060,
+          -0.3246,
+          0.4594
+        ],
+        "lx": -25,
+        "ly": 4,
+        "lz": 4,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Min+Hyd-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridBlankeMinimalManeuveringModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "model_base_name": "Hybrid-Pro+Hyd-1P",
+      "model_class": "deepsysid.models.hybrid.bounded_residual.HybridBlankePropulsionModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "learning_rate": 0.0025,
+        "epochs_initializer": 600,
+        "epochs_parallel": 1000,
+        "epochs_feedback": 0,
+        "g": 9.81,
+        "rho_water": 1025.0,
+        "m": 365.79e3,
+        "disp": 355.88,
+        "gm": 1.0,
+        "xg": -3.38,
+        "zg": -1.06,
+        "Ixx": 3.4263e6,
+        "Izz": 3.3818e7,
+        "Xud": -17400.0,
+        "Yvd": -1.9022e6,
+        "Ypd": -0.296e6,
+        "Yrd": -1.4e6,
+        "Kvd": 296000.0,
+        "Kpd": -674000.0,
+        "Krd": 0.0,
+        "Nvd": 538000.0,
+        "Npd": 0.0,
+        "Nrd": -4.3928e7,
+        "wake_factor": 0.25,
+        "diameter": 0.75,
+        "Kt": [
+          -0.1060,
+          -0.3246,
+          0.4594
+        ],
+        "lx": -25,
+        "ly": 4,
+        "lz": 4,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          64,
+          128,
+          192,
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          2,
+          3,
+          4
+        ]
+      }
+    }
+  ]
+}

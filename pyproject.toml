@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "relinet-results"
+version = "0.1.0"
+description = ""
+authors = ["Alexandra Baier <alx.baier@gmail.com>"]
+readme = "README.md"
+packages = [{include = "relinet_results"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+deepsysid = {git = "https://github.com/AlexandraBaier/deepsysid.git", extras = ["download"] }
+torch = "^1.13.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
