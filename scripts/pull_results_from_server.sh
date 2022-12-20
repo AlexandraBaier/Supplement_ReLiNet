@@ -1,4 +1,4 @@
-server_path=arboghast.baierax:/root/Supplement_Physics_Residual-Bounded_LSTM
+server_path=arboghast.baierax:/root/Supplement_ReLiNet
 
 mkdir ../datasets
 mkdir ../results

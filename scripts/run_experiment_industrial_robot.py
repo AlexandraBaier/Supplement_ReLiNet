@@ -6,15 +6,15 @@ from utils import load_environment
 
 
 def main():
-    parser = argparse.ArgumentParser('Run experiments for the 4-DOF ship in-distribution dataset.')
+    parser = argparse.ArgumentParser('Run experiments for the industrial robot dataset.')
     parser.add_argument('device')
     args = parser.parse_args()
 
     device_idx = int(args.device)
 
     main_path = pathlib.Path(__file__).parent.parent.absolute()
-    reportin_path = reportout_path = main_path.joinpath('configuration').joinpath('progress-ship.json')
-    environment_path = main_path.joinpath('environment').joinpath('ship-ind.env')
+    reportin_path = reportout_path = main_path.joinpath('configuration').joinpath('progress-industrial-robot.json')
+    environment_path = main_path.joinpath('environment').joinpath('industrial-robot.env')
 
     environment = load_environment(environment_path)
 

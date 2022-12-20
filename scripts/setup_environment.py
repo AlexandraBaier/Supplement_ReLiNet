@@ -31,8 +31,8 @@ def create_directories(main_path: pathlib.Path) -> Directories:
     dirs.results.joinpath('ship-ind').mkdir(exist_ok=True)
     dirs.results.joinpath('ship-ood').mkdir(exist_ok=True)
 
-    dirs.models.joinpath('pelican').mkdir(exist_ok=True)
-    dirs.results.joinpath('pelican').mkdir(exist_ok=True)
+    dirs.models.joinpath('industrial-robot').mkdir(exist_ok=True)
+    dirs.results.joinpath('industrial-robot').mkdir(exist_ok=True)
 
     return dirs
 
@@ -40,7 +40,7 @@ def create_directories(main_path: pathlib.Path) -> Directories:
 def create_environment(dirs: Directories) -> None:
     ship_ind_file = dirs.environment.joinpath('ship-ind.env')
     ship_ood_file = dirs.environment.joinpath('ship-ood.env')
-    pelican_file = dirs.environment.joinpath('pelican.env')
+    pelican_file = dirs.environment.joinpath('industrial-robot.env')
 
     with ship_ind_file.open(mode='w') as f:
         f.write('\n'.join([
@@ -60,10 +60,10 @@ def create_environment(dirs: Directories) -> None:
 
     with pelican_file.open(mode='w') as f:
         f.write('\n'.join([
-            f'DATASET_DIRECTORY={dirs.datasets.joinpath("pelican")}',
-            f'MODELS_DIRECTORY={dirs.models.joinpath("pelican")}',
-            f'RESULT_DIRECTORY={dirs.results.joinpath("pelican")}',
-            f'CONFIGURATION={dirs.configuration.joinpath("pelican.json")}'
+            f'DATASET_DIRECTORY={dirs.datasets.joinpath("industrial-robot")}',
+            f'MODELS_DIRECTORY={dirs.models.joinpath("industrial-robot")}',
+            f'RESULT_DIRECTORY={dirs.results.joinpath("industrial-robot")}',
+            f'CONFIGURATION={dirs.configuration.joinpath("industrial-robot.json")}'
         ]))
 
 
@@ -78,10 +78,12 @@ def download_datasets(dirs: Directories) -> None:
     subprocess.call([
         'deepsysid',
         'download',
-        'pelican',
-        '--train_fraction=0.6',
-        '--validation_fraction=0.1',
-        dirs.datasets.joinpath('pelican')
+        'industrial-robot',
+        # train-test split is 90-10
+        # we want a 70-20-10 split
+        # this is 18% of the training set for validation
+        '--validation_fraction=0.18',
+        dirs.datasets.joinpath('industrial-robot')
     ])
 
 

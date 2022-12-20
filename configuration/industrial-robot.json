@@ -1,25 +1,26 @@
 {
   "settings": {
-    "time_delta": 1.0,
+    "time_delta": 0.1,
     "window_size": 60,
     "horizon_size": 60,
     "session": {
       "total_runs_for_best_models": 10
     },
     "control_names": [
-      "n",
-      "deltal",
-      "deltar"
+      "u0",
+      "u1",
+      "u2",
+      "u3",
+      "u4",
+      "u5"
     ],
     "state_names": [
-      "u",
-      "v",
-      "p",
-      "r",
-      "phi",
-      "Vw",
-      "alpha_x",
-      "alpha_y"
+      "x0",
+      "x1",
+      "x2",
+      "x3",
+      "x4",
+      "x5"
     ],
     "additional_tests": {},
     "target_metric": "nrmse",
@@ -111,6 +112,7 @@
       },
       "flexible_parameters": {
         "recurrent_dim": [
+          32,
           64,
           128,
           192,
@@ -138,6 +140,7 @@
       },
       "flexible_parameters": {
         "recurrent_dim": [
+          32,
           64,
           128,
           192,
@@ -165,6 +168,7 @@
       },
       "flexible_parameters": {
         "recurrent_dim": [
+          32,
           64,
           128,
           192,

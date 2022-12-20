@@ -1,12 +1,12 @@
-# Physics Residual-Bounded LSTM for Safe Vehicle State Prediction
+# ReLiNet: Stable and Explainable Multistep Prediction with Recurrent Linear Parameter Varying Networks
 
 This repository contains the necessary scripts to reproduce the results from our paper
-"Physics Residual-Bounded LSTM for Safe Vehicle State Prediction".
+"ReLiNet: Stable and Explainable Multistep Prediction with Recurrent Linear Parameter Varying Networks".
 
 Clone this repository and install dependencies:
 ```shell
-git clone https://github.com/AlexandraBaier/Supplement_Physics_Residual-Bounded_LSTM.git
-cd Supplement_Physics_Residual-Bounded_LSTM
+git clone https://github.com/AlexandraBaier/Supplement_ReLiNet.git
+cd Supplement_ReLiNet
 pip install .
 ```
 
@@ -30,7 +30,7 @@ If these scripts are stopped for any reason, you can rerun them without issue.
 
 To run the experiments for the Pelican dataset run the following script:
 ```shell
-python scripts/run_experiment_pelican.py {device}
+python scripts/run_experiment_industrial_robot.py {device}
 ```
 
 Trained models are found in `models`, results in `results`, and datasets in `datasets`.

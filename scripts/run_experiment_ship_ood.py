@@ -8,7 +8,7 @@ from deepsysid.pipeline.evaluation import evaluate_model
 from deepsysid.pipeline.gridsearch import ExperimentSessionReport
 from deepsysid.pipeline.testing.runner import test_model
 
-from pbrl_utils import load_environment
+from utils import load_environment
 
 
 def main():
