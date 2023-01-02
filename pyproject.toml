@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Alexandra Baier <alx.baier@gmail.com>"]
 readme = "README.md"
-packages = [{include = "relinet_results"}]
+packages = [{include = "relinet_results", from = "srcs"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
