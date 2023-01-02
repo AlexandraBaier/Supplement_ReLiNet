@@ -4,11 +4,11 @@ version = "0.1.0"
 description = ""
 authors = ["Alexandra Baier <alx.baier@gmail.com>"]
 readme = "README.md"
-packages = [{include = "relinet_results", from = "srcs"}]
+packages = [{include = "relinet", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-deepsysid = {git = "https://github.com/AlexandraBaier/deepsysid.git", extras = ["download"] }
+deepsysid = { git = "https://github.com/AlexandraBaier/deepsysid.git" }
 torch = "^1.13.1"
 
 
