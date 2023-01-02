@@ -126,7 +126,7 @@
     },
     {
       "model_base_name": "ReLiNet",
-      "model_class": "deepsysid.models.switching.UnconstrainedSwitchingLSTMModel",
+      "model_class": "deepsysid.models.switching.switchrnn.UnconstrainedSwitchingLSTMModel",
       "static_parameters": {
         "dropout": 0.25,
         "sequence_length": 50,
@@ -153,7 +153,7 @@
     },
     {
       "model_base_name": "StableReLiNet",
-      "model_class": "deepsysid.models.switching.StableSwitchingLSTMModel",
+      "model_class": "deepsysid.models.switching.switchrnn.StableSwitchingLSTMModel",
       "static_parameters": {
         "dropout": 0.25,
         "sequence_length": 50,
