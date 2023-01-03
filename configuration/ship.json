@@ -73,7 +73,7 @@
       "model_class": "deepsysid.models.switching.klinreg.KLinearRegressionARXModel",
       "static_parameters": {
         "use_max_restarts": true,
-        "zero_probability_restarts": 100
+        "zero_probability_restarts": 25
       },
       "flexible_parameters": {
         "lag": [
