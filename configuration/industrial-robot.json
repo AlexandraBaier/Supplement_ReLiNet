@@ -62,8 +62,6 @@
       "static_parameters": {},
       "flexible_parameters": {
         "lag": [
-          5,
-          10,
           15,
           30,
           45,
@@ -76,12 +74,10 @@
       "model_class": "deepsysid.models.switching.klinreg.KLinearRegressionARXModel",
       "static_parameters": {
         "use_max_restarts": true,
-        "zero_probability_restarts": 100
+        "zero_probability_restarts": 25
       },
       "flexible_parameters": {
         "lag": [
-          5,
-          10,
           15,
           30,
           45,
@@ -89,11 +85,8 @@
         ],
         "n_modes": [
           2,
-          3,
           4,
-          5,
           6,
-          7,
           8
         ]
       }
@@ -112,12 +105,10 @@
       },
       "flexible_parameters": {
         "recurrent_dim": [
-          32,
           64,
           128,
           192,
-          256,
-          512
+          256
         ],
         "num_recurrent_layers": [
           2,
@@ -140,12 +131,10 @@
       },
       "flexible_parameters": {
         "recurrent_dim": [
-          32,
           64,
           128,
           192,
-          256,
-          512
+          256
         ],
         "num_recurrent_layers": [
           2,
@@ -168,12 +157,10 @@
       },
       "flexible_parameters": {
         "recurrent_dim": [
-          32,
           64,
           128,
           192,
-          256,
-          512
+          256
         ],
         "num_recurrent_layers": [
           2,
