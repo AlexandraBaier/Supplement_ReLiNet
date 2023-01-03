@@ -4,7 +4,7 @@ import subprocess
 
 from deepsysid.pipeline.gridsearch import ExperimentSessionReport
 
-from scripts.utils import load_environment
+from utils import load_environment
 
 
 def main():
