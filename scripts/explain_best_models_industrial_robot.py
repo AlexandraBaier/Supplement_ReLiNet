@@ -15,8 +15,8 @@ def main():
     device_idx = int(args.device)
 
     main_path = pathlib.Path(__file__).parent.parent.absolute()
-    report_path = main_path.joinpath('configuration').joinpath('progress-industrial-robot..json')
-    environment_path = main_path.joinpath('environment').joinpath('industrial-robot..env')
+    report_path = main_path.joinpath('configuration').joinpath('progress-industrial-robot.json')
+    environment_path = main_path.joinpath('environment').joinpath('industrial-robot.env')
 
     report = ExperimentSessionReport.parse_file(report_path)
 
