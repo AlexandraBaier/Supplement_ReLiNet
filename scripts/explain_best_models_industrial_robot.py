@@ -32,6 +32,7 @@ def main():
         return_code = subprocess.call([
             'deepsysid',
             'explain',
+            '--mode=test',
             '--enable-cuda',
             f'--device-idx={device_idx}',
             model

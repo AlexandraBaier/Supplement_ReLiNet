@@ -33,6 +33,7 @@ def main():
             'deepsysid',
             'explain',
             '--enable-cuda',
+            '--mode=test',
             f'--device-idx={device_idx}',
             model
         ], env=environment)
