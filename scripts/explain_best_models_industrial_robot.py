@@ -26,7 +26,7 @@ def main():
             'Best performing models have not been identified yet.'
         )
 
-    best_models = set(report.best_per_class.values()).union(report.best_per_base_name)
+    best_models = set(report.best_per_class.values()).union(report.best_per_base_name.values())
     environment = load_environment(environment_path)
     for idx, model in enumerate(best_models):
         return_code = subprocess.call([
