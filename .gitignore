@@ -1,1 +1,7 @@
 .idea
+models
+results
+environment
+datasets
+configuration/progress-industrial-robot.json
+configuration/progress-ship.json

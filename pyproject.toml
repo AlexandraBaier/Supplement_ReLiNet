@@ -10,6 +10,9 @@ packages = [{include = "relinet", from = "src"}]
 python = "^3.8"
 deepsysid = { git = "https://github.com/AlexandraBaier/deepsysid.git" }
 torch = "^1.13.1"
+pandas = "^1.5.2"
+matplotlib = "^3.6.2"
+numpy = "1.23.5"
 
 
 [build-system]
