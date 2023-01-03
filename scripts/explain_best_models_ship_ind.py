@@ -45,3 +45,7 @@ def main():
         print(
             f'Explained {idx + 1}/{len(best_models)}.'
         )
+
+
+if __name__ == '__main__':
+    main()
