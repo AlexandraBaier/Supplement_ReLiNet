@@ -42,8 +42,21 @@
         "metric_class": "deepsysid.explainability.metrics.LipschitzEstimateMetric",
         "parameters": {
           "n_disturbances": 100,
-          "control_error_std": [],
-          "state_error_std": []
+          "control_error_std": [
+            3.09,
+            0.00188,
+            0.00175
+          ],
+          "state_error_std": [
+            0.0167,
+            0.00427,
+            0.0000666,
+            0.000119,
+            0.000374,
+            0.0103,
+            0.00566,
+            0.0075
+          ]
         }
       },
       "simplicity": {
