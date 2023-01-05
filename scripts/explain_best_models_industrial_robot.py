@@ -36,7 +36,7 @@ def main():
     best_models = set(report.best_per_class.values()).union(report.best_per_base_name.values())
     best_models = set(
         model for model in best_models
-        if model.split('-') in EXPLAINED_MODEL_BASE_NAMES
+        if model.split('-')[0] in EXPLAINED_MODEL_BASE_NAMES
     )
     environment = load_environment(environment_path)
     for idx, model in enumerate(best_models):
