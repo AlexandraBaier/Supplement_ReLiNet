@@ -7,6 +7,13 @@ from deepsysid.pipeline.gridsearch import ExperimentSessionReport
 from utils import load_environment
 
 
+EXPLAINED_MODEL_BASE_NAMES = [
+    'LSTM+Init',
+    'ReLiNet',
+    'StableReLiNet'
+]
+
+
 def main():
     parser = argparse.ArgumentParser('Explain best-performing models on industrial robot dataset.')
     parser.add_argument('device')
@@ -27,6 +34,10 @@ def main():
         )
 
     best_models = set(report.best_per_class.values()).union(report.best_per_base_name.values())
+    best_models = set(
+        model for model in best_models
+        if model.split('-') in EXPLAINED_MODEL_BASE_NAMES
+    )
     environment = load_environment(environment_path)
     for idx, model in enumerate(best_models):
         return_code = subprocess.call([
