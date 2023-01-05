@@ -5,10 +5,9 @@ import pathlib
 
 from deepsysid.pipeline.configuration import ExperimentConfiguration, ExperimentGridSearchTemplate
 from deepsysid.pipeline.evaluation import evaluate_model
-from deepsysid.pipeline.gridsearch import ExperimentSessionReport
 from deepsysid.pipeline.testing.runner import test_model
 
-from utils import load_environment
+from relinet.utils import load_environment, retrieve_tested_models
 
 
 def main():
@@ -29,18 +28,7 @@ def main():
             ExperimentGridSearchTemplate.parse_obj(json.load(f))
         )
 
-    with report_path.open(mode='r') as f:
-        report = ExperimentSessionReport.parse_obj(json.load(f))
-
-    if report.tested_models is None:
-        print(
-            'Could not find any tested model in the progress report at '
-            f'{report_path}. Run run_experiment_ship_ind.py to complete experiments '
-            f'on in-distribution dataset first.'
-        )
-        return
-
-    models = report.tested_models
+    models = retrieve_tested_models(report_path)
     print(
         'Found the following models to test on out-of-distribution '
         f'dataset: {", ".join(models)}.'

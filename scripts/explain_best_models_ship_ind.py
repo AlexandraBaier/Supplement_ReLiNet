@@ -6,6 +6,8 @@ from deepsysid.pipeline.gridsearch import ExperimentSessionReport
 
 from utils import load_environment
 
+from relinet.utils import retrieve_tested_models
+
 EXPLAINED_MODEL_BASE_NAMES = [
     'LSTM+Init',
     'ReLiNet',
@@ -14,8 +16,6 @@ EXPLAINED_MODEL_BASE_NAMES = [
 
 
 def main():
-
-
     parser = argparse.ArgumentParser('Explain best-performing models on ship in-distribution dataset.')
     parser.add_argument('device')
     args = parser.parse_args()
@@ -26,21 +26,13 @@ def main():
     report_path = main_path.joinpath('configuration').joinpath('progress-ship.json')
     environment_path = main_path.joinpath('environment').joinpath('ship-ind.env')
 
-    report = ExperimentSessionReport.parse_file(report_path)
-
-    if report.best_per_class is None or report.best_per_base_name is None:
-        raise ValueError(
-            'Did not run "deepsysid session" with action=TEST_BEST yet. '
-            'Best performing models have not been identified yet.'
-        )
-
-    best_models = set(report.best_per_class.values()).union(report.best_per_base_name.values())
-    best_models = set(
-        model for model in best_models
+    tested_models = retrieve_tested_models(report_path)
+    tested_models = [
+        model for model in tested_models
         if model.split('-')[0] in EXPLAINED_MODEL_BASE_NAMES
-    )
+    ]
     environment = load_environment(environment_path)
-    for idx, model in enumerate(best_models):
+    for idx, model in enumerate(tested_models):
         return_code = subprocess.call([
             'deepsysid',
             'explain',
@@ -56,7 +48,7 @@ def main():
             )
 
         print(
-            f'Explained {idx + 1}/{len(best_models)}.'
+            f'Explained {idx + 1}/{len(tested_models)}.'
         )
 
 

@@ -1,8 +1,7 @@
 import argparse
 import pathlib
-import subprocess
 
-from utils import load_environment
+from relinet.utils import load_environment, run_full_gridsearch_session
 
 
 def main():
@@ -13,49 +12,16 @@ def main():
     device_idx = int(args.device)
 
     main_path = pathlib.Path(__file__).parent.parent.absolute()
-    reportin_path = reportout_path = main_path.joinpath('configuration').joinpath('progress-industrial-robot.json')
+    report_path = main_path.joinpath('configuration').joinpath('progress-industrial-robot.json')
     environment_path = main_path.joinpath('environment').joinpath('industrial-robot.env')
 
     environment = load_environment(environment_path)
 
-    if reportin_path.exists():
-        print('Continuing session...')
-        action = 'CONTINUE'
-        return_code = subprocess.call([
-            'deepsysid',
-            'session',
-            '--enable-cuda',
-            f'--device-idx={device_idx}',
-            f'--reportin={reportin_path}',
-            reportout_path,
-            action
-        ], env=environment)
-    else:
-        print('Starting session from fresh.')
-        action = 'NEW'
-        return_code = subprocess.call([
-            'deepsysid',
-            'session',
-            '--enable-cuda',
-            f'--device-idx={device_idx}',
-            reportout_path,
-            action
-        ], env=environment)
-
-    if return_code != 0:
-        print('Failed running gridsearch session. Stopping.')
-        return
-
-    action = 'TEST_BEST'
-    subprocess.call([
-        'deepsysid',
-        'session',
-        '--enable-cuda',
-        f'--device-idx={device_idx}',
-        f'--reportin={reportin_path}',
-        reportout_path,
-        action
-    ], env=environment)
+    run_full_gridsearch_session(
+        report_path=report_path,
+        device_idx=device_idx,
+        environment=environment
+    )
 
 
 if __name__ == '__main__':
