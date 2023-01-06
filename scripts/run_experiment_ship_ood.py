@@ -7,7 +7,7 @@ from deepsysid.pipeline.configuration import ExperimentConfiguration, Experiment
 from deepsysid.pipeline.evaluation import evaluate_model
 from deepsysid.pipeline.testing.runner import test_model
 
-from relinet.utils import load_environment, retrieve_tested_models
+from relinet.utils import load_environment, retrieve_tested_models, get_configuration_path
 
 
 def main():
@@ -18,11 +18,11 @@ def main():
     device_idx = int(args.device)
 
     main_path = pathlib.Path(__file__).parent.parent.absolute()
-    configuration_path = main_path.joinpath('configuration').joinpath('ship.json')
     report_path = main_path.joinpath('configuration').joinpath('progress-ship.json')
     environment_path = main_path.joinpath('environment').joinpath('ship-ood.env')
     environment = load_environment(environment_path)
 
+    configuration_path = get_configuration_path(environment_file_path=environment_path)
     with configuration_path.open(mode='r') as f:
         configuration = ExperimentConfiguration.from_grid_search_template(
             ExperimentGridSearchTemplate.parse_obj(json.load(f))

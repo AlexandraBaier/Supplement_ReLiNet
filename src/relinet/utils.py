@@ -15,6 +15,35 @@ def load_environment(environment_path: pathlib.Path) -> Dict[str, str]:
     return env
 
 
+def get_value_from_environment_file(
+    environment_path: pathlib.Path,
+    environment_variable: str
+) -> pathlib.Path:
+    with environment_path.open(mode='r') as f:
+        for line in f:
+            var_name, var_value = line.strip().split('=')
+            if var_name == environment_variable:
+                return pathlib.Path(var_value).expanduser().absolute()
+
+
+def get_results_directory(
+    environment_file_path: pathlib.Path
+) -> pathlib.Path:
+    return get_value_from_environment_file(
+        environment_file_path,
+        'RESULT_DIRECTORY'
+    )
+
+
+def get_configuration_path(
+    environment_file_path: pathlib.Path
+) -> pathlib.Path:
+    return get_value_from_environment_file(
+        environment_file_path,
+        'CONFIGURATION'
+    )
+
+
 def run_full_gridsearch_session(
     report_path: pathlib.Path,
     device_idx: int,
