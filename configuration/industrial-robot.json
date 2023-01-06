@@ -212,6 +212,31 @@
           0.00005
         ]
       }
+    },
+    {
+      "model_base_name": "StableReLiNet-v2",
+      "model_class": "deepsysid.models.switching.switchrnn.StableSwitchingLSTMModel",
+      "static_parameters": {
+        "dropout": 0.25,
+        "sequence_length": 50,
+        "batch_size": 256,
+        "epochs_initializer": 800,
+        "epochs_predictor": 1200,
+        "learning_rate": 0.002,
+        "loss": "mse"
+      },
+      "flexible_parameters": {
+        "recurrent_dim": [
+          256,
+          512
+        ],
+        "num_recurrent_layers": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
     }
   ],
   "explainers": {
