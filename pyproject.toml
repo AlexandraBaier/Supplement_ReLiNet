@@ -7,12 +7,13 @@ readme = "README.md"
 packages = [{include = "relinet", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.12"
 deepsysid = { git = "https://github.com/AlexandraBaier/deepsysid.git" }
 torch = "^1.13.1"
 pandas = "^1.5.2"
 matplotlib = "^3.6.2"
 numpy = "1.23.5"
+scipy = "^1.10.0"
 
 
 [build-system]

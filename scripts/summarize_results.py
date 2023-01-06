@@ -1,3 +1,4 @@
+import math
 import pathlib
 from typing import Set
 
@@ -8,35 +9,6 @@ from deepsysid.pipeline.configuration import ExperimentGridSearchTemplate, Exper
 from deepsysid.pipeline.data_io import build_score_file_name, build_explanation_result_file_name
 from deepsysid.pipeline.evaluation import ReadableEvaluationScores
 from deepsysid.pipeline.gridsearch import ExperimentSessionReport
-
-
-def get_value_from_environment_file(
-    environment_path: pathlib.Path,
-    environment_variable: str
-) -> pathlib.Path:
-    with environment_path.open(mode='r') as f:
-        for line in f:
-            var_name, var_value = line.strip().split('=')
-            if var_name == environment_variable:
-                return pathlib.Path(var_value).expanduser().absolute()
-
-
-def get_results_directory(
-    environment_file_path: pathlib.Path
-) -> pathlib.Path:
-    return get_value_from_environment_file(
-        environment_file_path,
-        'RESULT_DIRECTORY'
-    )
-
-
-def get_configuration_path(
-    environment_file_path: pathlib.Path
-) -> pathlib.Path:
-    return get_value_from_environment_file(
-        environment_file_path,
-        'CONFIGURATION'
-    )
 
 
 def get_best_models(report_path: pathlib.Path) -> Set[str]:
@@ -120,33 +92,59 @@ def summarize_explanation_scores(
 
 def summarize_experiment(
     report_path: pathlib.Path,
-    environment_path: pathlib.Path
+    configuration_path: pathlib.Path,
+    result_directory: pathlib.Path,
 ) -> None:
-    result_directory = get_results_directory(environment_path)
     best_models = get_best_models(report_path)
 
-    configuration_path = get_configuration_path(environment_path)
     configuration = ExperimentConfiguration.from_grid_search_template(
         ExperimentGridSearchTemplate.parse_file(configuration_path)
     )
+    n_runs = configuration.session.total_runs_for_best_models
 
     prediction_scores = summarize_prediction_scores(
         configuration,
         best_models,
         result_directory
     )
-    explanation_scores = summarize_explanation_scores(
-        configuration,
-        best_models,
-        result_directory
-    )
+    prediction_scores['run'] = 0
+    for run_idx in range(1, n_runs):
+        additional_prediction_scores = summarize_prediction_scores(
+            configuration,
+            best_models,
+            result_directory=result_directory.joinpath(f'repeat-{run_idx}')
+        )
+        additional_prediction_scores['run'] = run_idx
+        prediction_scores = pd.concat((prediction_scores, additional_prediction_scores))
+
+    # https://stackoverflow.com/a/53522680
+    stats = prediction_scores\
+        .groupby(['model'])[['H=1', 'H=60']]\
+        .agg(['mean', 'count', 'std'])
+    horizons = [1, configuration.horizon_size]
+    for horizon in horizons:
+        mean = stats[(f'H={horizon}', 'mean')]
+        count = stats[(f'H={horizon}', 'count')]
+        std = stats[(f'H={horizon}', 'std')]
+        stats[(f'H={horizon}', 'ci95-width')] = 1.96 * std / np.sqrt(count)
+        stats[(f'H={horizon}', 'ci95-lo')] = mean - stats[(f'H={horizon}', 'ci95-width')]
+        stats[(f'H={horizon}', 'ci95-hi')] = mean + stats[(f'H={horizon}', 'ci95-width')]
+
+    # explanation_scores = summarize_explanation_scores(
+    #     configuration,
+    #     best_models,
+    #     result_directory
+    # )
 
     prediction_scores.to_csv(
-        result_directory.joinpath('summary-prediction.csv')
+        result_directory.joinpath('summary-prediction.csv'),
     )
-    explanation_scores.to_csv(
-        result_directory.joinpath('summary-explanation.csv')
+    stats.to_csv(
+        result_directory.joinpath('summary-prediction-ci.csv'),
     )
+    # explanation_scores.to_csv(
+    #     result_directory.joinpath('summary-explanation.csv')
+    # )
 
 
 def main():
@@ -154,17 +152,20 @@ def main():
 
     summarize_experiment(
         report_path=main_path.joinpath('configuration').joinpath('progress-ship.json'),
-        environment_path=main_path.joinpath('environment').joinpath('ship-ind.env')
+        configuration_path=main_path.joinpath('configuration').joinpath('ship.json'),
+        result_directory=main_path.joinpath('results').joinpath('ship-ind')
     )
 
     summarize_experiment(
         report_path=main_path.joinpath('configuration').joinpath('progress-ship.json'),
-        environment_path=main_path.joinpath('environment').joinpath('ship-ood.env')
+        configuration_path=main_path.joinpath('configuration').joinpath('ship.json'),
+        result_directory=main_path.joinpath('results').joinpath('ship-ood')
     )
 
     summarize_experiment(
         report_path=main_path.joinpath('configuration').joinpath('progress-industrial-robot.json'),
-        environment_path=main_path.joinpath('environment').joinpath('industrial-robot.env')
+        configuration_path=main_path.joinpath('configuration').joinpath('industrial-robot.json'),
+        result_directory=main_path.joinpath('results').joinpath('industrial-robot')
     )
 
 
