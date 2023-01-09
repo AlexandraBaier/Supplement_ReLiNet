@@ -47,7 +47,7 @@ def main():
             )
 
         print(
-            f'Explained {idx + 1}/{len(best_models)}.'
+            f'Explained {idx + 1}/{len(tested_models)}.'
         )
 
 
