@@ -2,9 +2,7 @@ import argparse
 import pathlib
 import subprocess
 
-from deepsysid.pipeline.gridsearch import ExperimentSessionReport
-
-from utils import load_environment
+from relinet.utils import load_environment
 
 from relinet.utils import retrieve_tested_models
 
