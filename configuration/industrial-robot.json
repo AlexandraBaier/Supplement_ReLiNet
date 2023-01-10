@@ -64,7 +64,7 @@
       "simplicity": {
         "metric_class": "deepsysid.explainability.metrics.ExplanationComplexityMetric",
         "parameters": {
-          "relevance_threshold": 0.1
+          "relevance_threshold": 0.01
         }
       }
     }

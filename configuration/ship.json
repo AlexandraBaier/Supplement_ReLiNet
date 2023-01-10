@@ -62,7 +62,7 @@
       "simplicity": {
         "metric_class": "deepsysid.explainability.metrics.ExplanationComplexityMetric",
         "parameters": {
-          "relevance_threshold": 0.1
+          "relevance_threshold": 0.01
         }
       }
     }
@@ -215,13 +215,20 @@
   "explainers": {
     "ReLiNet-Explainer": {
       "explainer_class": "deepsysid.explainability.explainers.switching.SwitchingLSTMExplainer",
+      "explained_super_classes": [
+        "deepsysid.models.switching.switchrnn.UnconstrainedSwitchingLSTMModel",
+        "deepsysid.models.switching.switchrnn.StableSwitchingLSTMModel"
+      ],
       "parameters": {}
     },
     "LIME": {
       "explainer_class": "deepsysid.explainability.explainers.lime.LIMEExplainer",
       "parameters": {
         "num_samples": 100,
-        "cv_folds": 5
+        "cv_folds": 5,
+        "explained_super_classes": [
+          "deepsysid.models.recurrent.LSTMInitModel"
+        ]
       }
     }
   }
