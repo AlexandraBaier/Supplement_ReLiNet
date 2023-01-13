@@ -41,7 +41,7 @@
       "lipschitz": {
         "metric_class": "deepsysid.explainability.metrics.LipschitzEstimateMetric",
         "parameters": {
-          "n_disturbances": 50,
+          "n_disturbances": 10,
           "control_error_std": [
             3.09,
             0.00188,
@@ -224,7 +224,7 @@
     "LIME": {
       "explainer_class": "deepsysid.explainability.explainers.lime.LIMEExplainer",
       "parameters": {
-        "num_samples": 100,
+        "num_samples": 50,
         "cv_folds": 5,
         "explained_super_classes": [
           "deepsysid.models.recurrent.LSTMInitModel"
