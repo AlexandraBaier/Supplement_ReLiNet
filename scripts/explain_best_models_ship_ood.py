@@ -22,7 +22,7 @@ def main():
 
     main_path = pathlib.Path(__file__).parent.parent.absolute()
     report_path = main_path.joinpath('configuration').joinpath('progress-ship.json')
-    environment_path = main_path.joinpath('environment').joinpath('ship-ind.env')
+    environment_path = main_path.joinpath('environment').joinpath('ship-ood.env')
 
     tested_models = retrieve_tested_models(report_path)
     tested_models = [
