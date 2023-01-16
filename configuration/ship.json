@@ -220,16 +220,6 @@
         "deepsysid.models.switching.switchrnn.StableSwitchingLSTMModel"
       ],
       "parameters": {}
-    },
-    "LIME": {
-      "explainer_class": "deepsysid.explainability.explainers.lime.LIMEExplainer",
-      "parameters": {
-        "num_samples": 50,
-        "cv_folds": 5,
-        "explained_super_classes": [
-          "deepsysid.models.recurrent.LSTMInitModel"
-        ]
-      }
     }
   }
 }
