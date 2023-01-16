@@ -7,10 +7,12 @@ from relinet.utils import load_environment
 from relinet.utils import retrieve_tested_models
 
 EXPLAINED_MODELS = [
-    'LSTM+Init-64-3',
-    'ReLiNet-64-2',
-    'StableReLiNet-64-2'
+    #'LSTM+Init-64-3',
+    #'ReLiNet-64-2',
+    'StableReLiNet-64-3'
 ]
+
+# MAKE SURE OOD has train set too.
 
 
 def main():
