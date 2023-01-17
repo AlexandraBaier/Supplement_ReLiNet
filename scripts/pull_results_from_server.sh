@@ -5,8 +5,8 @@ mkdir results
 mkdir models
 mkdir environment
 
-rsync -r $server_path/datasets/ datasets
-rsync -r $server_path/results/ results
-rsync -r $server_path/models/ models
-rsync -r $server_path/environment/ environment
-rsync -r $server_path/configuration/ configuration
+rsync -r --ignore-existing  $server_path/datasets/ datasets
+rsync -r --ignore-existing  $server_path/results/ results
+rsync -r --ignore-existing  $server_path/models/ models
+rsync -r --ignore-existing  $server_path/environment/ environment
+rsync -r --ignore-existing  $server_path/configuration/ configuration

@@ -3,10 +3,8 @@
 This repository contains the necessary scripts to reproduce the results from our paper
 "ReLiNet: Stable and Explainable Multistep Prediction with Recurrent Linear Parameter Varying Networks".
 
-Clone this repository and install dependencies:
+Move to this directory and install with
 ```shell
-git clone https://github.com/AlexandraBaier/Supplement_ReLiNet.git
-cd Supplement_ReLiNet
 pip install .
 ```
 
@@ -22,6 +20,7 @@ To run the experiments for the ship dataset run the following two scripts in ord
 python scripts/run_experiment_ship_ind.py {device}
 python scripts/run_experiment_ship_ood.py {device}
 python scripts/explain_best_models_ship_ind.py {device}
+python scripts/explain_best_models_ship_ood.py {device}
 ```
 where `device` is the identifier (an integer starting at 0) for the GPU to run the experiments on. 
 If you only have one GPU, set the value to `0`.
@@ -38,3 +37,8 @@ python scripts/explain_best_models_industrial_robot.py {device}
 Trained models are found in `models`, results in `results`, and datasets in `datasets`.
 Environment variables pointing to the models, results, and configuration for each experiment are found in
 `environment`.
+
+To summarize the results in tables run:
+```shell
+python scripts/summarize_results.py
+```

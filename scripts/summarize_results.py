@@ -1,6 +1,5 @@
-import math
 import pathlib
-from typing import Set
+from typing import Set, List
 
 import h5py
 import numpy as np
@@ -28,7 +27,8 @@ def get_best_models(report_path: pathlib.Path) -> Set[str]:
 def summarize_prediction_scores(
     configuration: ExperimentConfiguration,
     models: Set[str],
-    result_directory: pathlib.Path
+    result_directory: pathlib.Path,
+    horizons: List[int]
 ) -> pd.DataFrame:
     rows = []
     for model in models:
@@ -41,17 +41,17 @@ def summarize_prediction_scores(
         scores = ReadableEvaluationScores.parse_file(
             result_directory.joinpath(model).joinpath(score_file_name)
         )
-        nrmse_single = np.mean(scores.scores_per_horizon[1]['nrmse'])
-        nrmse_multi = np.mean(
-            scores.scores_per_horizon[configuration.horizon_size]['nrmse']
-        )
-        rows.append([
-            model, nrmse_single, nrmse_multi
-        ])
+        row = [model]
+        for horizon in horizons:
+            nrmse_multi = np.mean(
+                scores.scores_per_horizon[horizon]['nrmse']
+            )
+            row.append(nrmse_multi)
+        rows.append(row)
 
     df = pd.DataFrame(
         data=rows,
-        columns=['model', 'H=1', f'H={configuration.horizon_size}']
+        columns=['model'] + [f'H={horizon}' for horizon in horizons]
     )
     return df
 
@@ -70,12 +70,32 @@ def summarize_explanation_scores(
             extension='hdf5'
         )
 
+        explanation_file_path = result_directory.joinpath(model).joinpath(explanation_file_name)
+        if not explanation_file_path.exists():
+            continue
+
         with h5py.File(
-            result_directory.joinpath(model).joinpath(explanation_file_name)
+            explanation_file_path
         ) as f:
             for metric_name in f.keys():
                 for explainer_name in f[metric_name].keys():
-                    score = f[metric_name][explainer_name]['score']
+                    if metric_name == 'simplicity':
+                        score = float(
+                            f[metric_name][explainer_name]['metadata']['simplicity'][:]
+                        )
+                    elif metric_name == 'infidelity':
+                        score = float(
+                            np.mean(f[metric_name][explainer_name]['score'][:])
+                        )
+                    elif metric_name == 'lipschitz':
+                        score = float(
+                            f[metric_name][explainer_name]['metadata']['largest_lipschitz_estimate'][:]
+                        )
+                    else:
+                        raise NotImplemented(
+                            f'Unknown metric name {metric_name} encountered.'
+                        )
+
                     rows.append([
                         model,
                         metric_name,
@@ -102,26 +122,28 @@ def summarize_experiment(
     )
     n_runs = configuration.session.total_runs_for_best_models
 
+    horizons = [1, 15, 30, 45, configuration.horizon_size]
     prediction_scores = summarize_prediction_scores(
         configuration,
         best_models,
-        result_directory
+        result_directory,
+        horizons
     )
     prediction_scores['run'] = 0
     for run_idx in range(1, n_runs):
         additional_prediction_scores = summarize_prediction_scores(
             configuration,
             best_models,
-            result_directory=result_directory.joinpath(f'repeat-{run_idx}')
+            result_directory=result_directory.joinpath(f'repeat-{run_idx}'),
+            horizons=horizons
         )
         additional_prediction_scores['run'] = run_idx
         prediction_scores = pd.concat((prediction_scores, additional_prediction_scores))
 
     # https://stackoverflow.com/a/53522680
     stats = prediction_scores\
-        .groupby(['model'])[['H=1', 'H=60']]\
+        .groupby(['model'])[[f'H={horizon}' for horizon in horizons]]\
         .agg(['mean', 'count', 'std'])
-    horizons = [1, configuration.horizon_size]
     for horizon in horizons:
         mean = stats[(f'H={horizon}', 'mean')]
         count = stats[(f'H={horizon}', 'count')]
@@ -130,11 +152,11 @@ def summarize_experiment(
         stats[(f'H={horizon}', 'ci95-lo')] = mean - stats[(f'H={horizon}', 'ci95-width')]
         stats[(f'H={horizon}', 'ci95-hi')] = mean + stats[(f'H={horizon}', 'ci95-width')]
 
-    # explanation_scores = summarize_explanation_scores(
-    #     configuration,
-    #     best_models,
-    #     result_directory
-    # )
+    explanation_scores = summarize_explanation_scores(
+        configuration,
+        best_models,
+        result_directory
+    )
 
     prediction_scores.to_csv(
         result_directory.joinpath('summary-prediction.csv'),
@@ -142,9 +164,9 @@ def summarize_experiment(
     stats.to_csv(
         result_directory.joinpath('summary-prediction-ci.csv'),
     )
-    # explanation_scores.to_csv(
-    #     result_directory.joinpath('summary-explanation.csv')
-    # )
+    explanation_scores.to_csv(
+        result_directory.joinpath('summary-explanation.csv')
+    )
 
 
 def main():

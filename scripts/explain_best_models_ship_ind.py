@@ -6,11 +6,12 @@ from relinet.utils import load_environment
 
 from relinet.utils import retrieve_tested_models
 
-EXPLAINED_MODELS = [
-    #'LSTM+Init-64-3',
-    #'ReLiNet-64-2',
-    'StableReLiNet-64-3'
+EXPLAINED_MODEL_BASE_NAMES = [
+    'LSTM+Init',
+    'ReLiNet',
+    'StableReLiNet'
 ]
+
 
 
 def main():
@@ -27,7 +28,7 @@ def main():
     tested_models = retrieve_tested_models(report_path)
     tested_models = [
         model for model in tested_models
-        if model in EXPLAINED_MODELS
+        if model.split('-')[0] in EXPLAINED_MODEL_BASE_NAMES
     ]
     environment = load_environment(environment_path)
     for idx, model in enumerate(tested_models):
