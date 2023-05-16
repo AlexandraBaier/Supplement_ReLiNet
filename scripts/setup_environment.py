@@ -1,6 +1,8 @@
 import dataclasses
+import os
 import pathlib
 import subprocess
+from distutils.dir_util import copy_tree
 
 
 @dataclasses.dataclass
@@ -75,6 +77,18 @@ def download_datasets(dirs: Directories) -> None:
         dirs.datasets.joinpath('ship-ind'),
         dirs.datasets.joinpath('ship-ood')
     ])
+
+    # ship-ood is for testing only, so it does not have a train dataset.
+    # However, for evaluation of explainers a train dataset is needed.
+    # We solve this by copying over the ship-ind train dataset.
+    ship_ind_train_directory = dirs.datasets.joinpath('ship-ind').joinpath('processed').joinpath('train')
+    ship_ood_train_directory = dirs.datasets.joinpath('ship-ood').joinpath('processed').joinpath('train')
+    os.makedirs(ship_ood_train_directory, exist_ok=True)
+    copy_tree(
+        str(ship_ind_train_directory),
+        str(ship_ood_train_directory)
+    )
+
     subprocess.call([
         'deepsysid',
         'download',
