@@ -3,17 +3,17 @@
 This repository contains the necessary scripts to reproduce the results from our paper
 "ReLiNet: Stable and Explainable Multistep Prediction with Recurrent Linear Parameter Varying Networks".
 
-Move to this directory and install with
+Clone the repository and move into its directory. Install all dependencies with
 ```shell
 pip install .
 ```
-
-All directories and files will be created within the cloned directory.
+Make sure to use your preferred virtual environment.
 
 Run the following to download all datasets and set up the required directories:
 ```shell
 python scripts/setup_environment.py
 ```
+All directories and files will be created within the cloned directory.
 
 To run the experiments for the ship dataset run the following two scripts in order:
 ```shell
@@ -38,7 +38,12 @@ Trained models are found in `models`, results in `results`, and datasets in `dat
 Environment variables pointing to the models, results, and configuration for each experiment are found in
 `environment`.
 
-To summarize the results in tables run:
+Finally, to summarize the results in tables run:
 ```shell
 python scripts/summarize_results.py
 ```
+You will find CSV files summarizing the results in `results/{dataset_name}`, where
+`dataset_name` corresponds to the SHIP-IND, SHIP-OOD, and ROBOT datasets as described 
+in the paper.
+
+Hyperparameter choices for gridsearch are documented in the directory `configuration`.
