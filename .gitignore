@@ -5,3 +5,7 @@ environment
 datasets
 configuration/progress-industrial-robot.json
 configuration/progress-ship.json
+notebooks/.ipynb_checkpoints
+*.png
+*.pgf
+*.pdf
