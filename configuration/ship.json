@@ -10,6 +10,7 @@
       "n",
       "deltal",
       "deltar"
+      "Vw",
     ],
     "state_names": [
       "u",
@@ -17,7 +18,6 @@
       "p",
       "r",
       "phi",
-      "Vw",
       "alpha_x",
       "alpha_y"
     ],
