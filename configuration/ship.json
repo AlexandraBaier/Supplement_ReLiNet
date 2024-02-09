@@ -9,8 +9,8 @@
     "control_names": [
       "n",
       "deltal",
-      "deltar"
-      "Vw",
+      "deltar",
+      "Vw"
     ],
     "state_names": [
       "u",
