@@ -9,7 +9,8 @@
     "control_names": [
       "n",
       "deltal",
-      "deltar"
+      "deltar",
+      "Vw"
     ],
     "state_names": [
       "u",
@@ -17,7 +18,6 @@
       "p",
       "r",
       "phi",
-      "Vw",
       "alpha_x",
       "alpha_y"
     ],
