@@ -56,7 +56,8 @@ def main():
             model_name=model,
             config=configuration,
             mode='test',
-            result_directory=environment['RESULT_DIRECTORY']
+            result_directory=environment['RESULT_DIRECTORY'],
+            models_directory=environment['MODELS_DIRECTORY']
         )
         print(
             f'Finished test run 1/{n_runs}.'
@@ -84,7 +85,8 @@ def main():
                 model_name=model,
                 config=configuration,
                 mode='test',
-                result_directory=result_directory
+                result_directory=result_directory,
+                models_directory=models_directory
             )
             print(
                 f'Finished test run {run_idx + 1}/{n_runs}.'
